@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+    alpine:
+        image: centos:latest
+        environment:
+            - PHP_memory_limit=256M
+            - PHP_engine=off
+            - PHP_output_buffering=2096
+            - PHP_opcache.max_accelerated_files=75000
+            - PHP_opcache.revalidate_freq=10
+            - PHP_opcache.enable=1
+        volumes:
+            - ./init.sh:/init.sh
