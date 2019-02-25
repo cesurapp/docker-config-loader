@@ -1,9 +1,8 @@
-# Key=Value Config Loader for Docker Environment
+# Docker Config Loader
 
 Docker is designed for entrypoint. Creates key=value config store using environment variables. Environment variables are deleted after the config store is created.
 
 ## Example Application
----
 Dockerfile:
 ```dockerfile
 FROM centos:latest
