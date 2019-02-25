@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 function loadConfig()
 {
@@ -21,17 +21,26 @@ function loadConfig()
     fi
 
     # Extract environment and save to file
-    for data in $(env | grep $envPrefix); do
-        cKey=$(cut -d'=' -f1 <<<${data/$envPrefix/""})
-        cValue=$(cut -d'=' -f2 <<<$data)
-        
-        # Write File
+    env | grep $envPrefix | while read -r line; do
+        cKey=$(cut -d':' -f1 <<<${line//*=/""})
+        cValue=$(cut -d':' -f2- <<<${line//*=/""})
+
+        #Write File
         if grep -q "^\s*$cKey\s*$configBrace.*" $configFile; then
-            sed -i "/^\s*$cKey/s/\s*$configBrace.*/$configBrace $cValue/" $configFile
+            sed -i "/^\s*$cKey\s*=/s/$configBrace.*/$configBrace $cValue/" $configFile
         else
+            echo '' >> $configFile
             echo ${cKey}$configBrace $cValue >> $configFile
         fi
     done
+
+    # Flush Environment 
+    for i in $(compgen -v | grep $envPrefix); do
+        unset $i
+    done   
 }
 
-loadConfig 
+# Write PHP Config
+loadConfig PHP_ /etc/php.d/php.ini
+
+exec "$@"
